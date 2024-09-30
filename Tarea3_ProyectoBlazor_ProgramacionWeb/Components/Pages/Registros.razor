@@ -1,0 +1,103 @@
+﻿@page "/registro"
+@inject NavigationManager NavMan
+@rendermode InteractiveServer
+@using System.Text.Json
+@inject IJSRuntime JSx
+
+
+<PageTitle>Registro</PageTitle>
+
+<InformacionImportante />
+
+<h3>Registros Recibidos</h3>
+
+<div class="text-end mb-3">
+    <button class="btn btn-primary" @onclick="NuevoRegistro">Nuevo Registro</button>
+    <a class="btn btn-success" href="/">Regresar</a>
+</div>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th class="text-center">Fecha</th>
+            <th class="text-center">Descripcion</th>
+            <th class="text-center">Costo Estimado</th>
+            <th class="text-center">Muertos</th>
+            <th class="text-center">Heridos</th>
+            <th class="text-center">Vehiculos Involucrados</th>
+            <th class="text-center">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var registro in registros)
+        {
+            <tr>
+                <td class="text-center">@registro.Fecha</td>
+                <td class="text-center">@((registro.Descripcion.Length > 30) ? @registro.Descripcion.Substring(0, 30) + "..." : @registro.Descripcion)</td>
+                <td class="text-center"><LabelDinero Valor="registro.CostoEstimado" /></td>
+                <td class="text-center">@registro.Muertos</td>
+                <td class="text-center">@registro.Heridos</td>
+                <td class="text-center">@registro.VehiculosInvolucrados</td>
+                <td>
+                    <button @onclick="()=>editarFila(registro)" class="btn btn-outline-primary btn-sm">Editar</button>
+                    <button @onclick="()=>eliminarFila(registro)" class="btn btn-outline-danger btn-sm">Eliminar</button>
+                    <button @onclick="()=>imprimirRegistro(registro)" class="btn btn-outline-success btn-sm">Imprimir</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+    List<Reporte> registros = new List<Reporte>();
+
+    private void imprimirRegistro(Reporte registro)
+    {
+        JSx.InvokeVoidAsync("window.open", "registro/imprimir/" + registro.Id, "_blank");
+    }
+
+    private void NuevoRegistro()
+    {
+        NavMan.NavigateTo("/registro/nuevo");
+    }
+
+    private void editarFila(Reporte registro)
+    {
+        NavMan.NavigateTo("registro/editar/" + registro.Id);
+    }
+
+    private async Task eliminarFila(Reporte registro)
+    {
+        // Confirmación con el usuario para eliminar el registro
+        var confirmacion = await JSx.InvokeAsync<bool>("confirm", "¿Está seguro de eliminar el registro?");
+
+        if (confirmacion)
+        {
+            // Elimina el registro basado en su Id
+            registros.RemoveAll(r => r.Id == registro.Id);
+
+            // Actualiza localStorage con la lista modificada
+            await JSx.InvokeVoidAsync("localStorage.setItem", "registros", JsonSerializer.Serialize(registros));
+
+            // Asegura que la UI se actualice
+            await InvokeAsync(StateHasChanged);
+
+            // Opción: Mostrar un mensaje de confirmación de eliminación
+            await JSx.InvokeVoidAsync("alert", "Registro eliminado exitosamente.");
+        }
+    }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        var registrosJson = await JSx.InvokeAsync<string>("localStorage.getItem", "registros");
+
+        if (registrosJson != null)
+        {
+            registros = JsonSerializer.Deserialize<List<Reporte>>(registrosJson);
+            StateHasChanged();
+        }
+    }
+}

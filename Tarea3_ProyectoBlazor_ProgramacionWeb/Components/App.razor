@@ -15,6 +15,17 @@
 <body>
     <Routes />
     <script src="_framework/blazor.web.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/site.js"></script>
+
+    <script>
+        function renderChart(chartId, chartData) {
+            var ctx = document.getElementById(chartId).getContext('2d');
+            new Chart(ctx, chartData);
+        }
+
+    </script>
+
 </body>
 
 </html>

@@ -1,0 +1,68 @@
+﻿@page "/registro/imprimir/{id}"
+@inject IJSRuntime JSx
+@inject NavigationManager NavMan
+@using System.Text.Json
+@rendermode InteractiveServer
+@layout PrintLayout
+
+<h3>Reporte de Caso</h3>
+<br />
+<hr />
+<div>
+    <b>Fecha: @reporte.Fecha</b><br />
+    <b>Descripción: @reporte.Descripcion</b><br />
+    <b>Costo Estimado: <LabelDinero Valor="@reporte.CostoEstimado" /></b><br />
+    <b>Muertos: @reporte.Muertos</b><br />
+    <b>Heridos: @reporte.Heridos</b><br />
+    <b>Vehículos Involucrados: @reporte.VehiculosInvolucrados</b><br />
+</div>
+
+
+@code {
+
+    [Parameter]
+
+    public string id { get; set; }
+
+    Reporte reporte = new Reporte();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            var registrosJson = await JSx.InvokeAsync<string>("localStorage.getItem", "registros");
+
+            if(registrosJson != null)
+            {
+                var registros = JsonSerializer.Deserialize<List<Reporte>>(registrosJson);
+
+                foreach (var item in registros)
+                {
+                    if(item.Id == id)
+                    {
+                        reporte = item;
+                        break;
+                    }
+                }
+
+                if(reporte.Id == null || reporte .Id.Length < 5)
+                {
+                    await JSx.InvokeVoidAsync("alert", "No se encontró el registro");
+                    NavMan.NavigateTo("registro");
+                }
+
+                StateHasChanged();
+
+                await JSx.InvokeVoidAsync("window.print");
+
+                await JSx.InvokeVoidAsync("window.close");
+            }
+            else
+            {
+                await JSx.InvokeVoidAsync("alert", "No se encontró el registro");
+                NavMan.NavigateTo("registro");
+            }
+        }
+    }
+
+}

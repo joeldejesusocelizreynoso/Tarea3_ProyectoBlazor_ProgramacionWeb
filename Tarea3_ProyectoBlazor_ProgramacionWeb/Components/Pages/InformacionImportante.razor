@@ -1,0 +1,66 @@
+﻿@page "/InformacionImportante"
+@rendermode InteractiveServer
+
+<div class="card my-3">
+    <div class="card-header">
+        <h5>Informaciones importantes que debes saber</h5>
+        <button class="btn btn-primary" @onclick="ToggleMostrar">
+            @if (mostrar)
+            {
+                <span>Ocultar</span>
+            }
+            else
+            {
+                <span>Mostrar</span>
+            }
+        </button>
+    </div>
+
+    @if (mostrar)
+    {
+        <div class="card-body">
+            @foreach (var mensaje in MensajesImportantes)
+            {
+                <p>@mensaje</p>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<string> MensajesImportantes = new List<string>
+    {
+        "1 - ¡Atención! Por favor, mantén siempre la distancia de seguridad al conducir y asegúrate de usar el cinturón de seguridad. Tu seguridad es lo más importante.",
+        "2 - Consejo: Realiza una revisión regular de tu vehículo para garantizar su buen funcionamiento y prevenir accidentes.",
+        "3 - Recuerda: En caso de un accidente, llama inmediatamente a las autoridades y brinda asistencia a los involucrados si es seguro hacerlo.",
+        "4 - ¡Tu opinión cuenta! Reporta cualquier accidente o incidente para ayudar a mejorar la seguridad vial en nuestra comunidad.",
+        "5 - Sabías que el 40% de los accidentes de tránsito son causados por distracciones al conducir. Mantente alerta y evita distracciones."
+
+    };
+
+    private bool mostrar = false;
+
+    private void ToggleMostrar()
+    {
+        mostrar = !mostrar;
+    }
+}
+
+<style>
+    .card-header {
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-body {
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .btn {
+        border-radius: 20px;
+    }
+</style>

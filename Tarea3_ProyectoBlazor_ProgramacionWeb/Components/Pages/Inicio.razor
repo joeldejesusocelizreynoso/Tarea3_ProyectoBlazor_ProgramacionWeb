@@ -1,7 +1,184 @@
-﻿@page "/"
+﻿@* @page "/"
+@rendermode InteractiveServer
+@inject IJSRuntime JSx
+@inject NavigationManager NavMan
+@using System.Text.Json
 
-<PageTitle>Inicio</PageTitle>
+<PageTitle>Estadísticas</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Estadísticas</h1>
 
-Welcome to your new app.
+<h3>Esta es la página de estadísticas</h3>
+
+<b>Cantidad de Casos Registrados: @registros.Count</b>
+<br />
+<b>Total de Costos Estimados: <LabelDinero Valor="@registros.Sum(r => r.CostoEstimado)" /></b>
+<br />
+<b>Total de Muertos: @registros.Sum(r => r.Muertos)</b>
+<br />
+<b>Total de Heridos: @registros.Sum(r => r.Heridos)</b>
+<br />
+<b>Total de Vehículos Involucrados: @registros.Sum(r => r.VehiculosInvolucrados)</b>
+<br />
+
+@code {
+
+    List<Reporte> registros = new List<Reporte>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            var registrosJson = await JSx.InvokeAsync<string>("localStorage.getItem", "registros");
+
+            if (registrosJson != null)
+            {
+                registros = JsonSerializer.Deserialize<List<Reporte>>(registrosJson);
+
+                StateHasChanged();
+
+            }
+        }
+    }
+
+} *@
+
+
+
+@page "/"
+@rendermode InteractiveServer
+@inject IJSRuntime JSx
+@inject NavigationManager NavMan
+@using System.Text.Json
+
+<PageTitle>Dashboard - Estadísticas</PageTitle>
+
+
+<InformacionImportante />
+
+<!-- Contenedor Principal -->
+<div class="container-fluid p-4">
+    <div class="row">
+
+        <!-- Contenido Principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Estadísticas del Sistema</h1>
+            </div>
+
+            <!-- Gráfico Circular (Donut) y Datos a la Derecha -->
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <h5>Distribución de Muertos, Heridos y Vehículos</h5>
+                    <canvas id="donutChart"></canvas>
+                </div>
+                <div class="col-lg-6 d-flex flex-column justify-content-start align-items-start">
+                    <h5>Cantidad de Casos Registrados</h5>
+                    <span class="display-4">@registros.Count</span>
+
+                    <h5 class="mt-4">Costo Estimado Total</h5>
+                    <span class="display-6"><LabelDinero Valor="@registros.Sum(r => r.CostoEstimado)" /></span>
+                </div>
+            </div>
+
+            <!-- Gráfico de Barras para Casos Registrados -->
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <h5>Cantidad de Casos Registrados</h5>
+                    <canvas id="casosChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico de Barras para Costo Estimado -->
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <h5>Costo Estimado Total</h5>
+                    <canvas id="costoChart"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+@code {
+    List<Reporte> registros = new List<Reporte>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var registrosJson = await JSx.InvokeAsync<string>("localStorage.getItem", "registros");
+
+            if (registrosJson != null)
+            {
+                registros = JsonSerializer.Deserialize<List<Reporte>>(registrosJson);
+                await InicializarGraficos();
+                StateHasChanged();
+            }
+        }
+    }
+
+    // Inicializar gráficos usando Chart.js
+    private async Task InicializarGraficos()
+    {
+        // Datos para el gráfico circular (Donut)
+        var dataDonut = new
+        {
+            type = "doughnut",
+            data = new
+            {
+                labels = new[] { "Muertos", "Heridos", "Vehículos Involucrados" },
+                datasets = new[]
+                {
+                    new {
+                        data = new[] { registros.Sum(r => r.Muertos), registros.Sum(r => r.Heridos), registros.Sum(r => r.VehiculosInvolucrados) },
+                        backgroundColor = new[] { "#dc3545", "#ffc107", "#17a2b8" } // Rojo, Amarillo, Azul
+                    }
+                }
+            }
+        };
+
+        // Datos para el gráfico de barras de Casos Registrados
+        var dataCasos = new
+        {
+            type = "bar",
+            data = new
+            {
+                labels = new[] { "Casos Registrados" },
+                datasets = new[]
+                {
+                    new {
+                        label = "Casos Registrados",
+                        data = new[] { registros.Count },
+                        backgroundColor = "#007bff", // Azul
+                        barPercentage = 0.4 // Ajusta el ancho de las barras
+                    }
+                }
+            }
+        };
+
+        // Datos para el gráfico de barras del Costo Estimado
+        var dataCosto = new
+        {
+            type = "bar",
+            data = new
+            {
+                labels = new[] { "Costo Estimado Total" },
+                datasets = new[]
+                {
+                    new {
+                        label = "Costo Estimado",
+                        data = new[] { registros.Sum(r => r.CostoEstimado) },
+                        backgroundColor = "#28a745", // Verde
+                        barPercentage = 0.4 // Ajusta el ancho de las barras
+                    }
+                }
+            }
+        };
+
+        // Configurar y renderizar los gráficos
+        await JSx.InvokeVoidAsync("renderChart", "donutChart", dataDonut);
+        await JSx.InvokeVoidAsync("renderChart", "casosChart", dataCasos);
+        await JSx.InvokeVoidAsync("renderChart", "costoChart", dataCosto);
+    }
+}

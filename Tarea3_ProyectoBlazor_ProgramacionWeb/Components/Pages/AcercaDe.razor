@@ -1,9 +1,172 @@
-﻿@page "/AcercaDe"
+﻿@* @page "/AcercaDe"
+@rendermode InteractiveServer
 
 <PageTitle>Acerca De</PageTitle>
 
-<h3>AcercaDe</h3>
+<div class="acerca-de-container">
+    <h1>Acerca de</h1>
 
-@code {
+    <div class="profile">
+        <img src="images/Joel De Jesús Oseliz Reynoso.jpg" alt="Foto 2x2" />
 
-}
+        <h3>Nombre: Joel De Jesús Oseliz Reynoso </h3>
+        <p>Matrícula: 2023-1132</p>
+
+        <div class="contact-links">
+            <p>Institución: <a href="https://itla.edu.do/" target="_blank">ITLA (Instituto Tecnológico De Las Américas</a> </p>
+            <p>Contactar por: <a href="mailto:joeldejesusocelizreynoso@gmail.com" target="_blank">Email</a></p>
+
+            <p>Chatear por: <a href="javascript:void(0);" onclick="showMessage('https://wa.me/+18099906126')">WhatsApp</a></p>
+            <p>Chatear por: <a href="javascript:void(0);" onclick="showMessage('https://t.me/joeldejesusoselizreynoso')">Telegram</a></p>
+        </div>
+
+        <p>Al terminar el ITLA me encantaría ser un full stack developer en diversos lenguajes de programación, trabajando para diferentes empresas con diversos cargos y al mismo tiempo impartiendo clase universitaria sobre el área de tecnología (aunque también podría ser una materia que no estuviera directamente relacionada con la tecnología).</p>
+    </div>
+</div>
+
+<!-- Agrega este script para mostrar la alerta y redirigir -->
+<script>
+    function showMessage(url) {
+        alert("Hola te contacto para un trabajo bueno, te pagaremos mucho dinero");
+        setTimeout(function() {
+            window.location.href = url;
+        }, 500); // Retardo de medio segundo para la redirección
+    }
+</script>
+ *@
+
+ @page "/AcercaDe"
+@rendermode InteractiveServer
+
+<PageTitle>Acerca De</PageTitle>
+
+<!-- Contenedor Principal -->
+<div class="acerca-de-container">
+    <h1>Acerca de</h1>
+
+    <!-- Perfil -->
+    <div class="profile">
+        <img src="images/Joel De Jesús Oseliz Reynoso.jpg" alt="Foto 2x2" class="profile-pic" />
+
+        <h3>Joel De Jesús Oseliz Reynoso</h3>
+        <p class="matricula">Matrícula: 2023-1132</p>
+
+        <div class="contact-links">
+            <p>Institución: <a href="https://itla.edu.do/" target="_blank">ITLA (Instituto Tecnológico De Las Américas)</a></p>
+            <p>Contactar por: <a href="mailto:joeldejesusocelizreynoso@gmail.com" target="_blank">Email</a></p>
+            <p>Chatear por: <a href="javascript:void(0);" onclick="showMessage('https://wa.me/+18099906126')">WhatsApp</a></p>
+            <p>Chatear por: <a href="javascript:void(0);" onclick="showMessage('https://t.me/joeldejesusoselizreynoso')">Telegram</a></p>
+        </div>
+
+        <p class="bio">
+            Al terminar el ITLA me encantaría ser un full stack developer en diversos lenguajes de programación, trabajando para diferentes empresas con diversos cargos y al mismo tiempo impartiendo clase universitaria sobre el área de tecnología (aunque también podría ser una materia que no estuviera directamente relacionada con la tecnología).
+        </p>
+    </div>
+</div>
+
+<!-- Script para WhatsApp y Telegram -->
+<script>
+    function showMessage(url) {
+        alert("Hola te contacto para un trabajo bueno, te pagaremos mucho dinero");
+        setTimeout(function() {
+            window.location.href = url;
+        }, 500); // Retardo de medio segundo para la redirección
+    }
+</script>
+
+<!-- CSS -->
+<style>
+    /* Estilo general */
+    .acerca-de-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    h1 {
+        font-size: 3rem;
+        color: #343a40;
+        margin-bottom: 1.5rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    .profile {
+        margin-top: 30px;
+    }
+
+    .profile-pic {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        font-size: 1.8rem;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .matricula {
+        font-size: 1.2rem;
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+
+    .contact-links a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .contact-links a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+
+    .contact-links p {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+        color: #495057;
+    }
+
+    .bio {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: #212529;
+        margin-top: 2rem;
+        text-align: justify;
+        text-justify: inter-word;
+    }
+
+    /* Estilos Responsivos */
+
+        .acerca-de-container {
+            padding: 15px;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+        }
+
+        .bio {
+            font-size: 1rem;
+        }
+</style>

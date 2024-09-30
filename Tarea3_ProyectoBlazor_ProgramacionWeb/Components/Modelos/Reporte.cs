@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-class Reporte
+public class Reporte
 {
 
 
@@ -11,7 +11,7 @@ class Reporte
     public DateTime Fecha { get; set; } = DateTime.Now;
 
     [Required(ErrorMessage = "El campo Descripcion es requerido")]
-    [MinLength(10, ErrorMessage = "la descripcion debe tener al menos 10 caractere")]
+    [MinLength(10, ErrorMessage = "la descripcion debe tener al menos 10 caracteres")]
 
     public string Descripcion { get; set; } = "";
     public double CostoEstimado { get; set; } = 0;
