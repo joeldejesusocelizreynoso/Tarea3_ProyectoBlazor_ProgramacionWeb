@@ -72,7 +72,6 @@
 
             if (registrosJson != null)
             {
-                Console.WriteLine($"Datos Cargados: {registrosJson}");
                 registros = JsonSerializer.Deserialize<List<Reporte>>(registrosJson);
                 StateHasChanged();
             }
